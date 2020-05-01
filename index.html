@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>GTD计划提醒</title>
+    <link rel="stylesheet" href="./style.css">
+    <!-- <script src="./vue.js"></script> -->
+</head>
+
+<body>
+    <div class="page-top">
+        <div class="page-content">
+            <h2>任务计划列表</h2>
+        </div>
+    </div>
+    <div class="main">
+        <h3 class="big-title">添加任务：</h3>
+        <input placeholder="例如：吃饭睡觉打豆豆；    提示：+回车即可添加任务" class="task-input" type="text" v-on:keyup.enter="enterFn"
+            v-model="todo" />
+        <ul class="task-count">
+            <li>{{unComplete}}个任务未完成</li>
+
+            <li class="action">
+                <a :class="{active:visibility!=='unCompleted'&&visibility!=='completed'}" href="#all">所有任务</a>
+                <a :class="{active:visibility==='unCompleted'}" href="#unCompleted">未完成的任务</a>
+                <a :class="{active:visibility==='completed'}" href="#completed">完成的任务</a>
+            </li>
+        </ul>
+        <h3 class="big-title">任务列表：</h3>
+        <div class="tasks">
+
+            <span class="no-task-tip" v-show="!list.length">还没有添加任何任务</span>
+            <ul class="todo-list" v-show="list.length">
+                <li class="todo" v-for="item in filterData"
+                    v-bind:class="{completed:item.isComplete,editing:item===edtorTodos}">
+                    <div class="view">
+                        <input class="toggle" type="checkbox" v-model="item.isComplete" />
+                        <label @dblclick="edtorTodo(item)">{{item.title}}</label>
+                        <button class="destroy" @click="delFn(item)"></button>
+                    </div>
+                    <input class="edit" type="text" v-focus="edtorTodos===item" v-model="item.title"
+                        @blur="edtoEnd(item)" @keyup.enter="edtoEnd(item)" @keyup.esc="cancelEdit(item)" />
+                </li>
+            </ul>
+        </div>
+
+
+
+        <div style="margin-top: 100px;font-size: large;" id="dateTime"></div>
+
+    </div>
+
+    <input type="date" id="input_date" />
+    <input type="time" id="input_time" />
+
+
+    <button style="margin-top: 100px; font-size: large;" onclick="clickbt()">点击按钮</button>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="./app.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <script>
+        Date.prototype.format = function (fmt) {
+            var o = {
+                "y+": this.getFullYear, //年
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds() //秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1
+                .length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ?
+                    (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+        var a = setInterval(
+            "document.getElementById('dateTime').innerHTML = (new Date()).format('yyyy-MM-dd hh:mm:ss');",
+            1000);
+
+
+        setInterval(() => {
+
+            let date_str = document.getElementById('input_date').value;
+            let time_str = document.getElementById('input_time').value;
+
+            let setTime = (date_str + " " + time_str + ":00");
+
+            if (setTime === (new Date()).format('yyyy-MM-dd hh:mm:ss')) {
+                console.log("时间相等");
+                var httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
+                httpRequest.open('GET',
+                    'https://sc.ftqq.com/你的token.send?text=主人你还有任务没有完成ಥ_ಥ&&desp=- 详细内容' +
+                    (new Date()).format('yyyy-MM-dd hh:mm:ss'),
+                    true); //第二步：打开连接 将请求参数写在url中 ps:"./Ptest.php?name=test&nameone=testone"
+                httpRequest.send(); //第三步：发送请求 将请求参数写在URL中
+
+                httpRequest.onreadystatechange = function () {
+                    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                        var json = httpRequest.responseText; //获取到json字符串，还需解析
+                        console.log(json);
+                    }
+                };
+            }
+
+            console.log('____________________');
+
+
+            console.log(setTime);
+            console.log((new Date()).format('yyyy-MM-dd hh:mm:ss'));
+
+
+        }, 1000);
+
+        function clickbt(params) {
+
+
+
+
+        }
+
+        console.log(a);
+    </script>
+
+
+
+</body>
+
+</html>
